@@ -142,7 +142,7 @@ class MultipleEntityRow extends LitElement {
         if (typeof conf.secondary_info === 'string') {
             return html`<span>${conf.secondary_info}</span>`;
         }
-        return html`<span>${this.renderValue(this.info, this.config.secondary_info)}</span>`;
+        return html`<span>${this.renderValue(conf.info, conf.secondary_info)}</span>`;
     }
 
     renderValue(stateObj, config) {
