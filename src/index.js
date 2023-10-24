@@ -55,7 +55,15 @@ class MultipleEntityRow extends LitElement {
             this.entities =
                 this.config.entities?.map((config) => {
                     const conf = typeof config === 'string' ? { entity: config } : config;
-                    return { ...conf, stateObj: conf.entity ? hass.states[conf.entity] : this.stateObj };
+                    return { 
+                        ...conf, 
+                        stateObj: conf.entity 
+                            ? hass.states[conf.entity] 
+                            : this.stateObj,
+                        info: conf.secondary_info
+                            ? hass.states[conf.secondary_info.entity]
+                            : null
+                    };
                 }) ?? [];
         }
     }
@@ -119,7 +127,22 @@ class MultipleEntityRow extends LitElement {
         return html`<div class="entity" style="${entityStyles(config)}" @click="${onClick}">
             <span>${entityName(stateObj, config)}</span>
             <div>${config.icon ? this.renderIcon(stateObj, config) : this.renderValue(stateObj, config)}</div>
+            ${this.renderEntitySecondaryInfo(config)}
         </div>`;
+    }
+
+    renderEntitySecondaryInfo(conf) {
+        if (
+            !conf.secondary_info ||
+            hasGenericSecondaryInfo(conf.secondary_info) ||
+            hideIf(conf.info, conf.secondary_info)
+        ) {
+            return null;
+        }
+        if (typeof conf.secondary_info === 'string') {
+            return html`<span>${conf.secondary_info}</span>`;
+        }
+        return html`<span>${this.renderValue(this.info, this.config.secondary_info)}</span>`;
     }
 
     renderValue(stateObj, config) {
