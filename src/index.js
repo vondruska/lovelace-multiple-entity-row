@@ -171,6 +171,18 @@ class MultipleEntityRow extends LitElement {
                 capitalize
             ></hui-timestamp-display>`;
         }
+        if(config.format === "shortdate") {
+            const value = config.attribute
+                ? stateObj.attributes[config.attribute] ?? stateObj[config.attribute]
+                : stateObj.state;
+            const timestamp = new Date(value);
+            if (!(timestamp instanceof Date) || isNaN(timestamp.getTime())) {
+                return value;
+            }
+
+            return html`${timestamp.toLocaleDateString()}`;
+        }
+
         return entityStateDisplay(this._hass, stateObj, config);
     }
 
